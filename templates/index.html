@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Microscope Specimen Size Calculator</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"/>
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <span class="logo">🔬</span>
+      <div>
+        <h1>Microscope Specimen Size Calculator</h1>
+        <p class="subtitle">CSC 442 — Computational Biology &amp; Interdisciplinary Studies</p>
+      </div>
+      <a href="/history" class="btn btn-outline">📋 View History</a>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="card">
+      <h2>Perform a Calculation</h2>
+      <p class="hint">Fill in the fields below. All fields are required.</p>
+
+      <form id="calcForm" enctype="multipart/form-data" onsubmit="submitForm(event)">
+
+        <!-- Username -->
+        <div class="form-group">
+          <label for="username">👤 Username</label>
+          <input type="text" id="username" name="username" placeholder="Enter your username" required/>
+        </div>
+
+        <!-- Image Upload -->
+        <div class="form-group">
+          <label for="image">🖼 Specimen Image</label>
+          <div class="upload-area" id="uploadArea" onclick="document.getElementById('image').click()">
+            <div id="uploadPrompt">
+              <span class="upload-icon">📂</span>
+              <p>Click to browse or drag &amp; drop image</p>
+              <p class="upload-hint">PNG, JPG, JPEG, GIF, BMP, TIFF supported</p>
+            </div>
+            <img id="imgPreview" src="" alt="Preview" style="display:none; max-height:200px; border-radius:6px;"/>
+          </div>
+          <input type="file" id="image" name="image" accept="image/*"
+                 style="display:none" onchange="previewImage(event)" required/>
+        </div>
+
+        <!-- Measured Size -->
+        <div class="form-group">
+          <label for="measured_size">📏 Measured Size from Microscope Image</label>
+          <div class="input-row">
+            <input type="number" id="measured_size" name="measured_size"
+                   placeholder="e.g. 3.5" step="any" min="0.000001" required/>
+            <span class="unit-badge">mm</span>
+          </div>
+        </div>
+
+        <!-- Microscope Type -->
+        <div class="form-group">
+          <label for="microscope_type">🔬 Microscope Type</label>
+          <select id="microscope_type" name="microscope_type" required>
+            <option value="" disabled selected>Select a microscope type…</option>
+            {% for mic in microscopes %}
+            <option value="{{ mic }}">{{ mic }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <!-- Output Unit -->
+        <div class="form-group">
+          <label for="output_unit">📐 Output Unit</label>
+          <select id="output_unit" name="output_unit" required>
+            {% for unit in units %}
+            <option value="{{ unit }}" {% if unit == 'µm' %}selected{% endif %}>{{ unit }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <!-- Errors -->
+        <div id="errorBox" class="error-box" style="display:none;"></div>
+
+        <!-- Submit -->
+        <button type="submit" class="btn btn-primary btn-lg" id="calcBtn">
+          ⚗ Calculate Real Size
+        </button>
+      </form>
+    </div>
+
+    <!-- Result -->
+    <div class="card result-card" id="resultCard" style="display:none;">
+      <h2>✅ Result</h2>
+      <div class="result-grid" id="resultContent"></div>
+    </div>
+
+    <!-- Formula Info -->
+    <div class="card info-card">
+      <h3>ℹ️ Formula Reference</h3>
+      <div class="formula-box">
+        <strong>Real Size = Measured Size (mm) ÷ Magnification Factor</strong>
+      </div>
+      <table class="mag-table">
+        <thead><tr><th>Microscope Type</th><th>Magnification</th></tr></thead>
+        <tbody>
+          <tr><td>Stereo / Dissecting Microscope</td><td>×20</td></tr>
+          <tr><td>Light Microscope (Low Power)</td><td>×40</td></tr>
+          <tr><td>Light Microscope (Medium Power)</td><td>×100</td></tr>
+          <tr><td>Light Microscope (High Power)</td><td>×400</td></tr>
+          <tr><td>Light Microscope (Oil Immersion)</td><td>×1,000</td></tr>
+          <tr><td>Confocal Microscope</td><td>×600</td></tr>
+          <tr><td>Scanning Electron Microscope (SEM)</td><td>×10,000</td></tr>
+          <tr><td>Transmission Electron Microscope (TEM)</td><td>×50,000</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+
+  <footer>
+    <p>CSC 442 · Department of Computer Science · Faculty of Physical Sciences · 2024/2025</p>
+  </footer>
+
+  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

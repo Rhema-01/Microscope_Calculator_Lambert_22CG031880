@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Calculation History — Microscope Calculator</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"/>
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <span class="logo">🔬</span>
+      <div>
+        <h1>Calculation History</h1>
+        <p class="subtitle">All saved records from the database</p>
+      </div>
+      <a href="/" class="btn btn-outline">⬅ Back to Calculator</a>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="card">
+      <h2>📋 Records ({{ records | length }} total)</h2>
+
+      {% if not records %}
+        <p class="empty-msg">No calculations have been saved yet. Go perform one!</p>
+      {% else %}
+      <div class="table-wrapper">
+        <table class="records-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Username</th>
+              <th>Microscope Type</th>
+              <th>Magnification</th>
+              <th>Measured (mm)</th>
+              <th>Real Size</th>
+              <th>Image</th>
+              <th>Timestamp</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for r in records %}
+            <tr>
+              <td>{{ r['id'] }}</td>
+              <td><strong>{{ r['username'] }}</strong></td>
+              <td>{{ r['microscope_type'] }}</td>
+              <td>×{{ '{:,}'.format(r['magnification']) }}</td>
+              <td>{{ '%.4f'|format(r['measured_size']) }}</td>
+              <td class="real-size">{{ '%.6f'|format(r['real_size_disp']) }} {{ r['output_unit'] }}</td>
+              <td>
+                {% if r['image_filename'] %}
+                  <a href="/static/uploads/{{ r['image_filename'] }}" target="_blank">
+                    <img src="/static/uploads/{{ r['image_filename'] }}"
+                         alt="specimen" class="thumb"/>
+                  </a>
+                {% else %}
+                  <span class="no-img">—</span>
+                {% endif %}
+              </td>
+              <td class="ts">{{ r['timestamp'] }}</td>
+              <td>
+                <form method="POST" action="/delete/{{ r['id'] }}"
+                      onsubmit="return confirm('Delete record #{{ r[\'id\'] }}?')">
+                  <button type="submit" class="btn btn-danger btn-sm">🗑 Delete</button>
+                </form>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% endif %}
+    </div>
+  </main>
+
+  <footer>
+    <p>CSC 442 · Department of Computer Science · Faculty of Physical Sciences · 2024/2025</p>
+  </footer>
+</body>
+</html>
