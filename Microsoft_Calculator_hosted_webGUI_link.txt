@@ -1,4 +1,4 @@
 Name: LAMBERT BIMWARIT RHEMA
 Matric number: 22CG031880
-Live URL of hosted application: https://assignment-lac-alpha-81.vercel.app/
+Live URL of hosted application: https://microscope-calculator-lambert-22cg031880-k0qd.onrender.com/
 GitHub repository link: https://github.com/Rhema-01/Microscope_Calculator_Lambert_22CG031880.git
